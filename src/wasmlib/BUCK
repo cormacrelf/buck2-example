@@ -1,0 +1,14 @@
+load("@prelude//decls:rust_rules.bzl", "rust_proc_macro_propagation")
+
+rust_library(
+    name = "wasmlib",
+    srcs = ["lib.rs"],
+    crate_root = "lib.rs",
+    deps = [
+        "//third-party:bob",
+        "//third-party:serde",
+        "//third-party:serde_json",
+        "//third-party:serde_derive",
+    ],
+    visibility = ["PUBLIC"],
+)

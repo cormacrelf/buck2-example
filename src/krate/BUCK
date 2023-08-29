@@ -1,0 +1,47 @@
+lib = [":krate"]
+lib_srcs = glob(["src/**/*.rs"])
+
+deps = [
+    "//third-party:semver",
+]
+
+dev_deps = [
+    "//third-party:serde"
+]
+
+rust_library(
+    name = "krate",
+    srcs = lib_srcs,
+    deps = deps,
+    visibility = ["PUBLIC"],
+    tests = [":krate-unittest", ":krate-integration"]
+)
+
+rust_test(
+    name = "krate-unittest",
+    srcs = lib_srcs,
+    deps = deps + dev_deps,
+)
+
+
+### Q. Why did we not put test.rs and main.rs in src/?
+### 
+### A. Because we used glob(["src/**/*.rs"]) for the library's srcs.
+###    We don't want main.rs and test.rs to be compiled as part of
+###    the library.
+
+rust_test(
+    name = "krate-integration",
+    crate_root = "test.rs",
+    srcs = ["test.rs"],
+    deps = deps + dev_deps + lib,
+)
+
+rust_binary(
+    name = "krate-bin",
+    srcs = ["main.rs"],
+    crate_root = "main.rs",
+    deps = deps + lib,
+    visibility = ["PUBLIC"],
+)
+

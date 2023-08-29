@@ -1,0 +1,28 @@
+[workspace]
+
+[package]
+name = "rust-third-party"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+# Dummy target to keep Cargo happy
+[[bin]]
+name = "fake"
+path = "/dev/null"
+
+[dependencies]
+bob = { path = "./bob" }
+serde = { version = "1.0.188" }
+serde_derive = { version = "1.0.188" }
+serde_json = "1"
+
+# we will get these working when reindeer becomes plugin-aware and can route
+# the proc macros for us.
+semver = { version = "1.0.17", features = ["serde"] }
+ahash = "0.8.3"
+getrandom = { version = "0.2.10", features = ["js"] }
+indexmap = { version = "2", features = ["serde"] }
+regex = "1.9.1"
+wasm-bindgen = "0.2.87"
+wasm-bindgen-macro = "0.2.87"

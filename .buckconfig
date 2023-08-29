@@ -1,0 +1,52 @@
+# vim: set ft=conf :
+[repositories]
+prelude = prelude
+# root//...
+root = .
+# toolchains//:rust etc
+toolchains = toolchains
+# used as platforms//:wasm32
+platforms = platforms
+# a black hole repository for the facebook-specific stuff to be aliased to
+none = none
+
+[repository_aliases]
+# used for config//os:none etc
+config = prelude
+# yeet these into the black hole
+fbcode = none
+fbsource = none
+fbcode_macros = none
+buck = none
+
+# Example: https://github.com/facebook/buck2/blob/22de607180792007acff1f568254a950b7396b11/app/buck2_node/src/configuration/target_platform_detector.rs#L215
+#
+# some target (e.g. root//src/bin:hello_world) is looked up against each of these
+# mappings in order. The first match (cell matches, path is prefix of the target's path)
+# determines the platform to use.
+[parser]
+target_platform_detector_spec = target:root//...->prelude//platforms:default
+
+[project]
+ignore = .git, target
+
+# this is from buck 1, not sure if it works actually
+[rust]
+incremental = opt
+default_edition = 2021
+
+# you may want to put a line like this in .buckconfig.local.
+# the rust-project tool requires it to be set
+# sysroot_src_path = /home/<me>/.rustup/toolchains/stable-x86_64-unknown-linux-gnu
+
+# crucial, when you are supplying the target platform e.g. through
+# --target-platforms platforms//:wasm32
+[build]
+execution_platforms = prelude//platforms:default
+
+[buck2]
+materializations = deferred
+sqlite_materializer_state = true
+defer_write_actions = true
+restarter = true
+hash_all_commands = true

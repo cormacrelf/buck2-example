@@ -1,0 +1,52 @@
+load("@prelude//toolchains:rust.bzl", "system_rust_toolchain")
+load("@prelude//toolchains:genrule.bzl", "system_genrule_toolchain")
+load("@prelude//toolchains:cxx.bzl", "system_cxx_toolchain")
+load("@prelude//toolchains:python.bzl", "system_python_bootstrap_toolchain")
+
+system_genrule_toolchain(
+    name = "genrule",
+    visibility = ["PUBLIC"],
+)
+
+system_rust_toolchain(
+    name = "rust",
+    default_edition = "2021",
+    # currently broken
+    doctests = False,
+    visibility = ["PUBLIC"],
+    rustc_binary_flags = ["-g", "-O"],
+
+    # Instead of digging into the prelude for these, let's
+    # just override them here. When the output of ours is None,
+    # the rule will just use its own select(), which covers some
+    # basic macos/windows/linux triples.
+    rustc_target_triple = select({
+        "DEFAULT": None,
+        "config//os:none": select({
+            "config//cpu:wasm32": "wasm32-unknown-unknown"
+        }),
+    }),
+    rustc_flags = select({
+        "DEFAULT": None,
+        "config//os:none": select({
+            "config//cpu:wasm32": ["-C", "linker-flavor=wasm-ld"],
+        }),
+    }),
+)
+
+system_cxx_toolchain(
+    name = "cxx",
+    linker = select({
+        "DEFAULT": None,
+        "config//os:none": select({
+            "config//cpu:wasm32": "rust-lld"
+        }),
+    }),
+    visibility = ["PUBLIC"],
+)
+
+system_python_bootstrap_toolchain(
+    name = "python_bootstrap",
+    interpreter = "python3",
+    visibility = ["PUBLIC"],
+)
