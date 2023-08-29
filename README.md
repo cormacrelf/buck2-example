@@ -29,7 +29,8 @@ git clone https://github.com/cormacrelf/buck2-example.git
 cd buck2-example
 git submodule update --init --recursive
 
-git clone https://github.com/facebook/buck2 "$DIR/buck2"
+# using my fork for now
+git clone https://github.com/cormacrelf/buck2 "$DIR/buck2"
 cd "$DIR/buck2"
 # match the .buckversion file
 git checkout $(cat "$DIR/buck2-example/.buckversion")
